@@ -5,23 +5,25 @@ pragma abicoder v2;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
+import './DuelistKingRegistry.sol';
 
 contract DuelistKingCard is ERC721('DKC', 'Duelist King Card'), Ownable {
-  // Distributor address
-  address private distributor;
-
-  // Transfer Distribute Right to another address
-  event TransferDistributeRight(address indexed oldDistributor, address indexed newDistributor);
+  // Registry contract
+  DuelistKingRegistry private registry;
 
   // Only distributor is allowed to mint() new card
   // In this case we use Duelist King Fair Distributor
   modifier onlyDistributor() {
-    require(msg.sender == distributor, 'Card: Only distributor able to trigger this method');
+    // DuelistKingFairDistributor
+    require(
+      msg.sender == registry.getAddress(0x4475656c6973744b696e67466169724469737472696275746f72000000000000),
+      'Card: Only distributor able to trigger this method'
+    );
     _;
   }
 
-  constructor(address distributorAddr) {
-    _changeDistributor(distributorAddr);
+  constructor(address _registry) {
+    registry = DuelistKingRegistry(_registry);
   }
 
   // Deny Ether
@@ -29,21 +31,10 @@ contract DuelistKingCard is ERC721('DKC', 'Duelist King Card'), Ownable {
     revert("Card: We won't receive ETH");
   }
 
-  // Change distributor, ony owner able to do
-  function changeDistributor(address newDistributor) external onlyOwner returns (bool) {
-    return _changeDistributor(newDistributor);
-  }
-
   // Only owner able to mint new card
   // Duelist King Fair Distributor is owner of this contract
   function mint(address to, uint256 tokenId) external onlyDistributor returns (bool) {
     _mint(to, tokenId);
     return _exists(tokenId);
-  }
-
-  function _changeDistributor(address newDistributor) internal returns (bool) {
-    emit TransferDistributeRight(distributor, newDistributor);
-    distributor = newDistributor;
-    return true;
   }
 }

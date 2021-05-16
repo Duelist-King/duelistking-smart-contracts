@@ -6,6 +6,8 @@ pragma abicoder v2;
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import './DuelistKingCard.sol';
+import './DuelistKingRegistry.sol';
+import './DuelistKingFairDistributor.sol';
 
 contract DuelistKingRng is Ownable {
   // Total commited digest
@@ -20,8 +22,11 @@ contract DuelistKingRng is Ownable {
   // Revealed secret values map
   mapping(uint256 => bytes32) private secretValues;
 
-  // Oracle's address
+  // Oracle address
   address private oracle;
+
+  // Registry contract
+  DuelistKingRegistry private registry;
 
   // Last reveal number
   uint64 private lastReveal;
@@ -32,13 +37,17 @@ contract DuelistKingRng is Ownable {
 
   // Only Duelist King Oracle allow to trigger smart contract
   modifier onlyOracle() {
-    require(msg.sender == oracle, 'Rng: Only allow to be called by oracle');
+    // DuelistKingOracle
+    require(
+      msg.sender == registry.getAddress(0x4475656c6973744b696e674f7261636c65000000000000000000000000000000),
+      'Rng: Only allow to be called by oracle'
+    );
     _;
   }
 
   // Construct contract with oracle's address
-  constructor(address oracleAddress) {
-    oracle = oracleAddress;
+  constructor(address _registry) {
+    registry = DuelistKingRegistry(_registry);
   }
 
   // Deny to receive Ethereum
@@ -50,19 +59,19 @@ contract DuelistKingRng is Ownable {
   function commit(bytes32 digest) external onlyOracle returns (uint256) {
     // We begin from 1 instead of 0 to prevent error
     currentCommited += 1;
-    uint256 index = currentCommited;
-    secretDigests[index] = digest;
-    emit Committed(index, digest);
-    return index;
+    secretDigests[currentCommited] = digest;
+    emit Committed(currentCommited, digest);
+    return currentCommited;
   }
 
   // Duelist King Oracle will reveal S and t
   function reveal(bytes32 secret) external onlyOracle returns (uint256) {
     uint192 s;
     uint64 t;
+    // DuelistKingFairDistributor
+    address distributor = registry.getAddress(0x4475656c6973744b696e67466169724469737472696275746f72000000000000);
     // We begin from 1 instead of 0 to prevent error
     currentRevealed += 1;
-    uint256 index = currentRevealed;
     // Decompose secret to its components
     assembly {
       s := and(t, 0xffffffffffffffff)
@@ -70,14 +79,15 @@ contract DuelistKingRng is Ownable {
     }
     // We won't allow invalid timestamp
     require(t >= lastReveal, 'Rng: Invalid time stamp');
-    require(
-      keccak256(abi.encodePacked(secret)) == secretDigests[currentRevealed],
-      "Rng: Secret doesn't match digest"
-    );
-    secretValues[index] = secret;
+    require(keccak256(abi.encodePacked(secret)) == secretDigests[currentRevealed], "Rng: Secret doesn't match digest");
+    secretValues[currentRevealed] = secret;
     // Increase last reveal value
     lastReveal = t;
-    emit Revealed(index, s, t);
-    return index;
+    // Hook call to fair distribution
+    if (distributor != address(0x00)) {
+      require(DuelistKingFairDistributor(distributor).issueNewCard(secret), "Rng: Can't issue new card");
+    }
+    emit Revealed(currentRevealed, s, t);
+    return currentRevealed;
   }
 }

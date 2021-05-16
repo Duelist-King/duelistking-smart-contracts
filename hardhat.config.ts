@@ -4,6 +4,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+function contractName(name: string) {
+  const buf = Buffer.alloc(32);
+  buf.write(name);
+  console.log(`0x${buf.toString('hex')}\t${name}`);
+}
+
+contractName('DuelistKingRegistry');
+contractName('DuelistKingCard');
+contractName('DuelistKingRng');
+contractName('DuelistKingFairDistributor');
+contractName('DuelistKingOracle');
+
 let { DUELIST_KING_MNEMONIC, DUELIST_KING_RPC_URL } = process.env;
 DUELIST_KING_MNEMONIC = (DUELIST_KING_MNEMONIC || '').trim();
 DUELIST_KING_RPC_URL = (DUELIST_KING_RPC_URL || '').trim();
