@@ -27,7 +27,7 @@
     "@openzeppelin/contracts": "^4.1.0",
     "@typechain/ethers-v5": "^7.0.0",
     "dotenv": "^9.0.2",
-    "hardhat": "^2.2.1",
+    "hardhat": "^2.3.0",
     "hardhat-typechain": "^0.3.5",
     "ts-generator": "^0.1.1",
     "typechain-target-ethers-v5": "^5.0.1"
