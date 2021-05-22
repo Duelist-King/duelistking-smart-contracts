@@ -8,8 +8,9 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import './DuelistKingCard.sol';
 import './DuelistKingRegistry.sol';
 import './DuelistKingFairDistributor.sol';
+import './DuelistKingConst.sol';
 
-contract DuelistKingRng is Ownable {
+contract DuelistKingRng is DuelistKingConst, Ownable {
   // Total commited digest
   uint256 private currentCommited;
 
@@ -38,10 +39,7 @@ contract DuelistKingRng is Ownable {
   // Only Duelist King Oracle allow to trigger smart contract
   modifier onlyOracle() {
     // DuelistKingOracle
-    require(
-      msg.sender == registry.getAddress(0x4475656c6973744b696e674f7261636c65000000000000000000000000000000),
-      'Rng: Only allow to be called by oracle'
-    );
+    require(msg.sender == registry.getAddress(DuelistKingConst.Oracle), 'Rng: Only allow to be called by oracle');
     _;
   }
 
@@ -69,13 +67,13 @@ contract DuelistKingRng is Ownable {
     uint192 s;
     uint64 t;
     // DuelistKingFairDistributor
-    address distributor = registry.getAddress(0x4475656c6973744b696e67466169724469737472696275746f72000000000000);
+    address distributor = registry.getAddress(DuelistKingConst.FairDistributor);
     // We begin from 1 instead of 0 to prevent error
     currentRevealed += 1;
     // Decompose secret to its components
     assembly {
-      s := and(t, 0xffffffffffffffff)
-      t := shr(64, secret)
+      t := and(t, 0xffffffffffffffff)
+      s := shr(64, secret)
     }
     // We won't allow invalid timestamp
     require(t >= lastReveal, 'Rng: Invalid time stamp');

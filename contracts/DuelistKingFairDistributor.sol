@@ -6,8 +6,9 @@ pragma abicoder v2;
 import '@openzeppelin/contracts/access/Ownable.sol';
 import './DuelistKingCard.sol';
 import './DuelistKingRegistry.sol';
+import './DuelistKingConst.sol';
 
-contract DuelistKingFairDistributor is Ownable {
+contract DuelistKingFairDistributor is DuelistKingConst, Ownable {
   // Registry contract
   DuelistKingRegistry private registry;
   struct Campaign {
@@ -30,7 +31,7 @@ contract DuelistKingFairDistributor is Ownable {
   modifier onlyRng() {
     // DuelistKingRng
     require(
-      msg.sender == registry.getAddress(0x4475656c6973744b696e67526e67000000000000000000000000000000000000),
+      msg.sender == registry.getAddres(DuelistKingConst.Rng),
       'FairDistributor: Only allow calls from Duelist King RNG'
     );
     _;
