@@ -1,24 +1,18 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import 'hardhat-typechain';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import '@nomiclabs/hardhat-ethers';
 
 function contractName(name: string) {
   const buf = Buffer.alloc(32);
   buf.write(name);
-  console.log(`0x${buf.toString('hex')}\t${name}`);
+  console.log(`bytes32 private immutable ${name.replace('DuelistKing', '')} = 0x${buf.toString('hex')};`);
 }
 
 contractName('DuelistKingRegistry');
-contractName('DuelistKingCard');
+contractName('DuelistKingItem');
 contractName('DuelistKingRng');
 contractName('DuelistKingFairDistributor');
 contractName('DuelistKingOracle');
-
-let { DUELIST_KING_MNEMONIC, DUELIST_KING_RPC_URL } = process.env;
-DUELIST_KING_MNEMONIC = (DUELIST_KING_MNEMONIC || '').trim();
-DUELIST_KING_RPC_URL = (DUELIST_KING_RPC_URL || '').trim();
 
 const compilers = ['0.8.4'].map((item: string) => ({
   version: item,
@@ -40,12 +34,7 @@ const config: HardhatUserConfig = {
       gasPrice: 2000000000,
       hardfork: 'berlin',
       accounts: {
-        mnemonic: DUELIST_KING_MNEMONIC,
         path: "m/44'/60'/0'/0",
-      },
-      forking: {
-        url: DUELIST_KING_RPC_URL,
-        enabled: true,
       },
     },
   },
