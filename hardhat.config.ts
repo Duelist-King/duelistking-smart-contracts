@@ -5,11 +5,10 @@ import '@nomiclabs/hardhat-ethers';
 function contractName(name: string) {
   const buf = Buffer.alloc(32);
   buf.write(name);
-  console.log(`bytes32 private immutable ${name.replace('DuelistKing', '')} = 0x${buf.toString('hex')};`);
+  console.log(`bytes32 internal immutable ${name.replace('DuelistKing', '')} = 0x${buf.toString('hex')};`);
 }
 
 contractName('DuelistKingRegistry');
-contractName('DuelistKingItem');
 contractName('DuelistKingRng');
 contractName('DuelistKingFairDistributor');
 contractName('DuelistKingOracle');
