@@ -5,7 +5,6 @@ pragma abicoder v2;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
-import './DuelistKingCard.sol';
 import './DuelistKingRegistry.sol';
 import './DuelistKingFairDistributor.sol';
 import './DuelistKingConst.sol';
@@ -48,11 +47,6 @@ contract DuelistKingRng is DuelistKingConst, Ownable {
     registry = DuelistKingRegistry(_registry);
   }
 
-  // Deny to receive Ethereum
-  receive() external payable {
-    revert("Rng: We won't receive ETH");
-  }
-
   // Duelist King Oracle will commit H(S||t) to blockchain
   function commit(bytes32 digest) external onlyOracle returns (uint256) {
     // We begin from 1 instead of 0 to prevent error
@@ -83,7 +77,7 @@ contract DuelistKingRng is DuelistKingConst, Ownable {
     lastReveal = t;
     // Hook call to fair distribution
     if (distributor != address(0x00)) {
-      require(DuelistKingFairDistributor(distributor).issueNewCard(secret), "Rng: Can't issue new card");
+      require(DuelistKingFairDistributor(distributor).openLootBox(secret), "Rng: Can't do callback to distributor");
     }
     emit Revealed(currentRevealed, s, t);
     return currentRevealed;
