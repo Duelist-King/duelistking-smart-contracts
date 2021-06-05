@@ -1371,6 +1371,11 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
+dkdao@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/dkdao/-/dkdao-1.1.1.tgz#c96f9d87702afb6157f76124ccc1d26f5e240911"
+  integrity sha512-ibaGd/gGK13xjcCkXevzq8O1KcQ7P0OCIUN0UsyB4FBEdO33jCH15rUPmbqqZI7qIR6rhtNNDafwgmo8A33T1g==
+
 doctrine@1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-1.5.0.tgz#379dce730f6166f76cefa4e6707a159b02c5a6fa"

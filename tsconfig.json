@@ -14,6 +14,6 @@
     "types": ["node"]
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "*.js"],
   "files": ["./hardhat.config.ts"]
 }
