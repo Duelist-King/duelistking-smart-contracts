@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import 'hardhat-typechain';
 import '@nomiclabs/hardhat-ethers';
-
+/*
 function contractName(name: string) {
   const buf = Buffer.alloc(32);
   buf.write(name);
@@ -10,8 +10,9 @@ function contractName(name: string) {
 
 contractName('DuelistKingRegistry');
 contractName('DuelistKingRng');
-contractName('DuelistKingFairDistributor');
+contractName('DuelistKingDistributor');
 contractName('DuelistKingOracle');
+*/
 
 const compilers = ['0.8.4'].map((item: string) => ({
   version: item,
